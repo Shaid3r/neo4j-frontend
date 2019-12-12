@@ -16,6 +16,7 @@ function App() {
         <Layout>
           <Switch>
             <Route exact path="/" component={Dishes}/>
+            <Route exact path="/dishes" component={Dishes}/>
             <Route exact path="/dish/:dishId" component={DishDetail}/>
             <Route exact path="/find-dish" component={DishFinder}/>
             <Route exact path="/most-used" component={MostUsed}/>

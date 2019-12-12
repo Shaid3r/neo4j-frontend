@@ -8,7 +8,7 @@ export const NavigationBar = () => (
     <Navbar.Toggle aria-controls="responsive-navbar-nav"/>
     <Navbar.Collapse id="responsive-navbar-nav">
       <Nav className="mr-auto">
-        <Nav.Link as={NavLink} to='/' exact>Baza dań</Nav.Link>
+        <Nav.Link as={NavLink} to='/dishes' exact>Baza dań</Nav.Link>
         <Nav.Link as={NavLink} to='/find-dish'>Znajdź danie</Nav.Link>
         <Nav.Link as={NavLink} to='/most-used'>Najczęściej używane składniki</Nav.Link>
       </Nav>

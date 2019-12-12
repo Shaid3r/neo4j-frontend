@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React from "react";
 import styled from "styled-components";
 import Alert from "react-bootstrap/Alert";
 
@@ -10,18 +10,14 @@ const Styles = styled.div`
     z-index: 10;
 `;
 
-export default function OverlayMessage({msg}) {
-  const [show, setShow] = useState(true);
-
-  if (show) {
-    setTimeout(() => setShow(false), 3000);
-    return (
-      <Styles>
-        <Alert variant={msg.variant}>
-          {msg.msg}
-        </Alert>
-      </Styles>
-    );
-  }
-  return null;
+export default function OverlayMessage(props) {
+  if (!props.msg) return null
+  setTimeout(() => props.clearMsg(), 3000);
+  return (
+    <Styles>
+      <Alert variant={props.msg.variant}>
+        {props.msg.msg}
+      </Alert>
+    </Styles>
+  );
 }

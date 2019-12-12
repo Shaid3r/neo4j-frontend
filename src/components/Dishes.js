@@ -6,7 +6,6 @@ import styled from "styled-components";
 import {Config} from "../Config";
 import OverlayMessage from "./OverlayMessage";
 import {Link} from 'react-router-dom'
-import {postData} from "../utils";
 import {HeaderWrapper} from "./Common";
 import Form from "react-bootstrap/Form";
 import Row from "react-bootstrap/Row";
@@ -18,12 +17,12 @@ export default class Dishes extends React.Component {
     this.state = {
       dishes: null,
       isLoading: false,
-      formVisible: false
+      formVisible: false,
+      msg: null
     };
   }
 
   async componentDidMount() {
-    console.log("componentDidMount");
     await this.loadDishes();
   }
 
@@ -48,30 +47,25 @@ export default class Dishes extends React.Component {
   }
 
   async deleteDish(uuid) {
+    this.setState({isLoading: true});
     try {
       let res = await fetch(`${Config.API}/dish/${uuid}`, {method: 'DELETE'});
       if (res.status === 201) {
-        this.showMessage({"msg": "Danie zostało usunięte", variant: 'success'});
+        this.setState({isLoading: false, msg: {msg: "Danie zostało usunięte", variant: 'success'}});
       } else if (res.status === 404) {
         throw new Error('Nie ma takiego dania');
       } else {
         throw new Error('Wystąpił błąd. Spróbuj później');
       }
-    } catch (error) {
-      this.showMessage({"msg": error.message, variant: 'danger'});
+    } catch (error) {      
+      this.setState({isLoading: false, msg: {msg: error.message, variant: 'danger'}});
     }
     this.loadDishes()
   }
 
-  showMessage(msg) {
-    this.setState({
-      msg: msg,
-    });
-  }
-
   toggleForm() {
     this.setState({formVisible: !this.state.formVisible});
-    // this.loadDish() TODO
+    this.loadDishes()
   }
 
   render() {
@@ -91,15 +85,9 @@ export default class Dishes extends React.Component {
       )
     }
 
-    let msg = null;
-    if (this.state.msg) {
-      msg = <OverlayMessage msg={this.state.msg}/>;
-      this.setState({msg: null})
-    }
-
     return (
       <>
-        {msg}
+        <OverlayMessage msg={this.state.msg} clearMsg={() => this.setState({msg: null})}/>
         <DishesHeader onClick={() => this.toggleForm()}/>
         <DishesTable dishes={this.state.dishes} deleteDish={(uuid) => this.deleteDish(uuid)}/>
       </>
@@ -176,14 +164,14 @@ function Ingredient() {
 
 class AddDishForm extends React.Component {
   state = {
-    numIngredient: 1
+    numIngredient: 1,
+    msg: null
   };
 
   constructor(props) {
     super(props);
     this.handleSubmit = this.handleSubmit.bind(this);
   }
-
   onAddIngredient = () => {
     this.setState({
       numIngredient: this.state.numIngredient + 1
@@ -224,7 +212,14 @@ class AddDishForm extends React.Component {
 
     this.setState({isLoading: true});
     try {
-      let res = await postData(`${Config.API}/dishes`, dataToSend);
+      let res = await fetch(`${Config.API}/dishes`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(dataToSend)
+      });
+
       if (res.status === 201) {
         this.setState({isLoading: false, msg: {"msg": "Danie zostało dodane", 'variant': 'success'},});
       } else if (res.status === 400) {
@@ -256,7 +251,7 @@ class AddDishForm extends React.Component {
 
     return (
       <>
-        {this.state.msg && <OverlayMessage msg={this.state.msg}/>}
+        <OverlayMessage msg={this.state.msg} clearMsg={() => this.setState({msg: null})}/>
         <Form onSubmit={this.handleSubmit}>
           <Form.Group controlId="dishName">
             <Form.Control name="dishName" placeholder="Nazwa dania"/>
