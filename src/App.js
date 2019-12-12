@@ -1,25 +1,29 @@
 import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import {BrowserRouter as Router, Route, Switch} from "react-router-dom";
+import {NavigationBar} from "./components/NavigationBar";
+import {Layout} from "./components/Layout";
+import {NoMatch} from "./NoMatch";
+import Dishes from "./components/Dishes";
+import MostUsed from "./components/MostUsed";
+import DishFinder from "./components/DishFinder";
+import DishDetail from "./components/DishDetail";
 
 function App() {
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <React.Fragment>
+      <Router>
+        <NavigationBar/>
+        <Layout>
+          <Switch>
+            <Route exact path="/" component={Dishes}/>
+            <Route exact path="/dish/:dishId" component={DishDetail}/>
+            <Route exact path="/find-dish" component={DishFinder}/>
+            <Route exact path="/most-used" component={MostUsed}/>
+            <Route component={NoMatch}/>
+          </Switch>
+        </Layout>
+      </Router>
+    </React.Fragment>
   );
 }
 
